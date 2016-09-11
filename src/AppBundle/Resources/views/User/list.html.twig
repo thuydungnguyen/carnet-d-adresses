@@ -1,0 +1,25 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+    <h4>
+        <a href="{{ path('contact_add') }}" class="btn btn-success">Ajouter</a>
+        <a href="{{ path('contact_delete') }}" class="btn btn-danger">Supprimer</a>
+    </h4>
+    <h3>Mes contacts</h3>
+            {% for contact in listContacts %}
+            <div class="well">
+                {{ 'profile.show.username'|trans }}: {{ contact.username }}
+                <hr/>
+                {{ 'profile.show.website'|trans }}:  {{ contact.website }}
+                <br>
+                {{ 'profile.show.email'|trans }}: {{ contact.email }}
+                <br/>
+                {{ 'profile.show.tel'|trans }}: {{ contact.tel }}
+                <br>
+                {{ 'profile.show.adresse'|trans }}: {{ contact.adresse }}
+            </div>
+            {% endfor %}
+
+{% endblock fos_user_content %}

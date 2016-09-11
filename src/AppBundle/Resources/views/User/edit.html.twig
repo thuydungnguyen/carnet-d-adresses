@@ -1,0 +1,26 @@
+{% extends "FOSUserBundle::layout.html.twig" %}
+
+{% trans_default_domain 'FOSUserBundle' %}
+
+{% block fos_user_content %}
+{{ form_start(form, {'attr': {'class': 'form-horizontal'}}) }}
+
+    {{ form_errors(form) }}
+    <div class="form-group">
+        {{ form_label(form.friends, "Contacts", {'label_attr': {'class': 'col-sm-3 control-label'}}) }}
+        {{ form_errors(form.friends) }}
+        <div class="col-sm-9">
+            {{ form_widget(form.friends, {'attr': {'class': 'form-control'}}) }}
+        </div>
+    </div>
+
+    {{ form_rest(form) }}
+
+    <div class="form-group">
+        <div class="col-sm-3 col-sm-offset-3">
+            <input type="submit" value="{{ 'profile.edit.submit'|trans }}" class="btn btn-success"/>
+        </div>
+    </div>
+
+{{ form_end(form) }}
+{% endblock fos_user_content %}

@@ -1,0 +1,15 @@
+form:
+    website: Votre site web
+    tel: Télephone
+    adresse: Votre Adresse
+profile:
+    show:
+        username: Nom d'utilisateur
+        email: Adresse e-mail
+        tel: Télephone
+        website: Site web
+        adresse: Votre Adresse
+    edit:
+        submit: Mettre à jour
+    flash:
+        updated: 'Le profil a été mis à jour'

@@ -1,0 +1,74 @@
+<?php
+
+namespace AppBundle\Entity;
+
+use Doctrine\ORM\Mapping as ORM;
+
+/**
+ * Friendship
+ *
+ * @ORM\Table(name="friendship")
+ * @ORM\Entity(repositoryClass="AppBundle\Repository\FriendshipRepository")
+ */
+class Friendship
+{
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="myFriends")
+     * @ORM\Id
+     */
+    private $user;
+
+    /**
+     * @ORM\ManyToOne(targetEntity="User", inversedBy="friendsWithMe")
+     * @ORM\Id
+     */
+    private $myFriend;
+
+    /**
+     * Set user
+     *
+     * @param \AppBundle\Entity\User $user
+     *
+     * @return Friendship
+     */
+    public function setUser(\AppBundle\Entity\User $user)
+    {
+        $this->user = $user;
+
+        return $this;
+    }
+
+    /**
+     * Get user
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getUser()
+    {
+        return $this->user;
+    }
+
+    /**
+     * Set friend
+     *
+     * @param \AppBundle\Entity\User $friend
+     *
+     * @return Friendship
+     */
+    public function setFriend(\AppBundle\Entity\User $friend)
+    {
+        $this->friend = $friend;
+
+        return $this;
+    }
+
+    /**
+     * Get friend
+     *
+     * @return \AppBundle\Entity\User
+     */
+    public function getFriend()
+    {
+        return $this->friend;
+    }
+}
