@@ -6,8 +6,11 @@ use Doctrine\ORM\EntityRepository;
 use Symfony\Bridge\Doctrine\Form\Type\EntityType;
 use Symfony\Bundle\FrameworkBundle\Controller\Controller;
 use Symfony\Component\Form\Extension\Core\Type\FormType;
+use Symfony\Component\Form\FormEvent;
+use Symfony\Component\Form\FormEvents;
 use Symfony\Component\HttpFoundation\File\Exception\AccessDeniedException;
 use Symfony\Component\HttpFoundation\Request;
+use FOS\UserBundle\Model\UserInterface;
 
 class UserController extends Controller
 {
@@ -36,7 +39,8 @@ class UserController extends Controller
         }
 
         $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $me);
-        $formBuilder->add('friends', EntityType::class, array(
+        $formBuilder
+            ->add('friends', EntityType::class, array(
                 'class' => 'AppBundle:User',
                 'choice_label' => 'username',
                 'multiple'     => true,
@@ -51,6 +55,11 @@ class UserController extends Controller
 
         if($request->isMethod('POST') && $form->handleRequest($request)->isValid()){
             $em = $this->getDoctrine()->getManager();
+            foreach($contacts as $old_friend){
+                if($old_friend !== $me){
+                    $me->addFriend($old_friend);
+                }
+            }
             $em->flush();
 
             $request->getSession()->getFlashBag()->add('success', 'Contact ajouté');
@@ -68,9 +77,13 @@ class UserController extends Controller
         }
 
         $friends = $me->getFriends();
+        foreach($friends as $friend){
+            $contacts[] = $friend;
+        }
 
         $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $me);
-        $formBuilder->add('friends', EntityType::class, array(
+        $formBuilder
+            ->add('friends', EntityType::class, array(
                 'class' => 'AppBundle:User',
                 'choice_label' => 'username',
                 'multiple'     => true,
@@ -85,7 +98,13 @@ class UserController extends Controller
 
         if($request->isMethod('POST') && $form->handleRequest($request)->isValid()){
             $em = $this->getDoctrine()->getManager();
-            $em->flush();
+
+            $friends_to_remove = $request->get('form')['friends'];
+            foreach($friends_to_remove as $friend_to_remove){
+                $friend = $em->getRepository('AppBundle:User')->find($friend_to_remove);
+                $me->removeFriend($friend);
+            }
+            //$em->flush();
 
             $request->getSession()->getFlashBag()->add('success', 'Contact supprimé');
             return $this->redirectToRoute('contact_list');

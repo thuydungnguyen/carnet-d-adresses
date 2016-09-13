@@ -9,12 +9,20 @@
     <div class="container">
         <div class="well">
             {% if is_granted("IS_AUTHENTICATED_REMEMBERED") %}
-                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username}, 'FOSUserBundle') }} |
-                <a href="{{ path('fos_user_security_logout') }}">
-                    {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
-                </a>
+                <div class="text-left">
+                {{ 'layout.logged_in_as'|trans({'%username%': app.user.username|title}, 'FOSUserBundle') }}
+                </div>
+                <div class="text-right">
+                    <a href="{{ path('contact_list') }}">
+                        Mes contacts
+                    </a>|
+                    <a href="{{ path('fos_user_security_logout') }}">
+                        {{ 'layout.logout'|trans({}, 'FOSUserBundle') }}
+                    </a>
+                </div>
             {% else %}
-                <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>
+                <a href="{{ path('fos_user_security_login') }}">{{ 'layout.login'|trans({}, 'FOSUserBundle') }}</a>|
+                <a href="{{ path('fos_user_registration_register') }}">{{ 'layout.register'|trans({}, 'FOSUserBundle') }}</a>
             {% endif %}
         </div>
         <div class="col-xs-12 col-sm-8 col-sm-offset-2">

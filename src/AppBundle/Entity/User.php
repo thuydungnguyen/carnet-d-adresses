@@ -10,6 +10,7 @@ use Doctrine\ORM\Mapping as ORM;
  * User
  * @ORM\Entity(repositoryClass="AppBundle\Repository\UserRepository")
  * @ORM\Table(name="fos_user")
+ * @ORM\HasLifecycleCallbacks()
  */
 class User extends  BaseUser
 {
