@@ -77,9 +77,15 @@ class UserController extends Controller
         }
 
         $friends = $me->getFriends();
+
+        $contacts = array();
         foreach($friends as $friend){
             $contacts[] = $friend;
         }
+
+        $em = $this->getDoctrine()->getManager();
+        global $friends_to_remove;
+
 
         $formBuilder = $this->get('form.factory')->createBuilder(FormType::class, $me);
         $formBuilder
@@ -93,18 +99,31 @@ class UserController extends Controller
                         ->where("u.id IN (:friends)")->setParameter('friends',$friends);
                 }
             ))
+            ->addEventListener(FormEvents::PRE_SUBMIT, function(FormEvent $event){
+                global $friends_to_remove;
+                $friends_to_remove = $event->getData()['friends'];
+            })
+            ->addEventListener(FormEvents::POST_SUBMIT, function(FormEvent $event) use($contacts, $em){
+                $me = $event->getData();
+
+                foreach ($contacts as $contact){
+                    $me->addFriend($contact);
+                }
+
+                global $friends_to_remove;
+
+                foreach($friends_to_remove as $friend_to_remove){
+                    $friend_by_adding = $em->getRepository('AppBundle:User')->find($friend_to_remove);
+                    $friend_by_form = $em->getRepository('AppBundle:User')->find($friend_to_remove);
+                    $me->removeFriend($friend_by_adding);
+                    $me->removeFriend($friend_by_form);
+                }
+            })
         ;
         $form = $formBuilder->getForm();
 
         if($request->isMethod('POST') && $form->handleRequest($request)->isValid()){
-            $em = $this->getDoctrine()->getManager();
-
-            $friends_to_remove = $request->get('form')['friends'];
-            foreach($friends_to_remove as $friend_to_remove){
-                $friend = $em->getRepository('AppBundle:User')->find($friend_to_remove);
-                $me->removeFriend($friend);
-            }
-            //$em->flush();
+            $em->flush();
 
             $request->getSession()->getFlashBag()->add('success', 'Contact supprimé');
             return $this->redirectToRoute('contact_list');
